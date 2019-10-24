@@ -4,7 +4,7 @@ Sea level rise visualisation tools - NASA Space Apps Challenge
 
 ## Getting Started
 
-These project uses Leaflet Js library to display a map and elevation points of the island of kerkena, to get started follow installation instructions
+These project uses Leaflet Js library to display a map and water level submerging the island of kerkena according to the selected year, to get started follow installation instructions
 ### Prerequisites
 
 This project uses python as backend to fetch elevation values from NASA's SRTM elevations data. Before installing the dependencies make sure to create a new virtual environment by running : 
