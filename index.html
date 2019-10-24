@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Map</title>
+  
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+   integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+   crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+  integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+   crossorigin=""></script>
+
+   
+   <style>
+   #map {
+     height: 380px;
+   }
+   </style>
+</head>
+
+<body>
+  
+  <div id="map"></div>
+
+  <div id="latLong"></div>
+
+
+  <input type="range" name="" id="waterLevel" min="0" max="4" value="0">
+  <span id="rangeLevel"></span>
+  <button id="ClearCircles">Clear</button>
+
+  <br>
+  <select name="" id="yearSelect">
+    <option value="0">2019</option>
+    <option value="1">2300</option>
+    <option value="2">2600</option>
+    <option value="3">2900</option>
+    <option value="4">3100</option>
+  </select>
+  <script>
+
+
+
+    let seaLevel = 1; // 1 -> 303.030303
+    let allData = {};
+
+    (async () => {
+
+      function clearCircles() {
+        circles.map(c => c.remove())
+        circles = [];
+      }
+
+
+
+      const yearSelect = document.getElementById('yearSelect')
+
+      document.getElementById('ClearCircles').addEventListener('click', () => {
+        clearCircles();
+      });
+
+      document.getElementById('waterLevel').addEventListener('change', function () {
+        seaLevel = this.value;
+        
+
+        document.querySelector('#yearSelect [value="' + seaLevel + '"]').selected = true;
+        document.getElementById('rangeLevel').innerText = seaLevel;
+        drawCircles();
+      });
+      
+
+      const map = L.map('map').setView([34.7307, 11.1957], 11);
+      const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: 'Nasa space app challenge Sfax  '
+      });
+      tileLayer.addTo(map);
+
+      // const fg = L.tileLayer.mask('http://www.finds.jp/ws/tmc/1.0.0/Kanto_Rapid-900913-L/{z}/{x}/{y}.png', {
+      //   maskUrl : 'star.png', // optional
+      //   maskSize : 1024  //optional
+      // }).addTo(map);
+
+      // const marker = L.marker([34.7307, 11.1957]).addTo(map);
+      // marker.bindPopup("<b>Hello world!</b><br>I am a popup.");
+      
+      const response = await fetch('kerkenah.geojson');
+      const kerkenahGeoJson = await response.json();
+      
+      let l;
+
+      // L.geoJson(kerkenahGeoJson, 
+      // {
+      //   style: {
+      //     fillColor: '#ff0000',
+      //     weight: 1,
+      //     opacity: 0,
+      //     color: 'white',
+      //     dashArray: '3',
+      //     fillOpacity: 0.3,
+      //   },
+      //   onEachFeature: (feature, layer) => {
+      //       l = L.GeoJSON.geometryToLayer(feature)
+      //       return true;
+      //   },
+      // }).addTo(map);
+      
+      map.on('click', e => {
+        document.getElementById('latLong').innerHTML = e.latlng.lat + ' - ' + e.latlng.lng
+      });
+
+
+
+      
+      const startPoint = {
+        lat: 34.607214907435875,
+        lng: 10.953369140625
+      };
+
+
+      const endPoint = {
+        lat: 34.83278207689634, 
+        lng: 11.390762329101562
+      }
+      L.marker(startPoint).addTo(map)
+
+      L.marker(endPoint).addTo(map)
+      // const step = 0.00035226841;
+      const step = 0.001 // resolution 
+
+      let pointsCount = 0;
+
+
+      const res = await fetch('/elevations_high_res.json')
+      allData = await res.json();
+
+      let circles = [];
+
+      //drawCircles();
+
+      function drawCircles() {
+        clearCircles()
+        for (let lat = startPoint.lat; lat < endPoint.lat; lat+= step) {
+        for (let lng = startPoint.lng; lng < endPoint.lng; lng += step) {
+          
+          let latLng = [
+            [lat, lng],
+            [lat, endPoint.lng]];
+            
+
+          let verts = [
+            [startPoint.lat, lng],
+            [endPoint.lat, lng]
+          ];
+
+
+          // let x = L.polyline(verts, {color: 'black'}).addTo(map);
+          // let line = L.polyline(latLng, {color: 'black'}).addTo(map);
+
+          pointsCount++;
+
+          try {
+            // const res = await fetch('http://127.0.0.1:5000/elevation/' + lat + '/' + lng)
+            // let r = await res.text();
+
+            r = allData[lat + '-' + lng]
+
+            if (r.length <= 5) {
+
+            //allData[lat + '-' + lng] = r
+            } 
+
+            if (r > 0) {
+
+              r = +r;
+            } else if(r == 0) {
+              r = 5;
+            } else {
+              r = -r * 2
+            }
+
+            //let r = allData[lat + '-' + lng] 
+
+            let color = 'blue';
+            const elevation = r;
+
+            if (r <= seaLevel) {
+              circles.push(L.circle([lat, lng], {radius: r*100+20, fill: true, color, stroke: false, fillOpacity: 0.05}).addTo(map))
+            } else {
+              
+            }
+
+          } 
+          catch(e) {
+
+          }
+
+
+        }
+
+      }
+
+      }
+      console.log(allData)
+
+      localStorage.setItem('geoData', JSON.stringify(allData));
+ 
+    })();
+  </script>
+</body>
+</html>
