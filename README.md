@@ -60,8 +60,8 @@ http://127.0.0.1:5000/elevation/{Lat}/{Long}
 
 * **Mohamed Ben Amar** - *This web map* - [Virmak](https://github.com/Virmak)
 * **Jed Fakhfekh** - 3D Simulation using UE4
-* ** Kevin Jessy - Algorithm and problem solving
-* ** Patrick - Algorithm and problem solving
+* **Kevin Jessy** - Algorithm and problem solving
+* **Patrick** - Algorithm and problem solving
 
 
 ## License
