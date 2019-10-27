@@ -54,12 +54,14 @@ http://127.0.0.1:5000/elevation/{Lat}/{Long}
 
 * [Flask](http://flask.palletsprojects.com/en/1.1.x/) - The web framework used
 * [LeafLet](https://leafletjs.com/reference-1.5.0.html) - Map JS Library
+* [Qgis2threejs](https://qgis2threejs.readthedocs.io) - Qgis Plugin
 
 
 ## Authors
 
 * **Mohamed Ben Amar** - *This web map* - [Virmak](https://github.com/Virmak)
 * **Jed Fakhfekh** - 3D Simulation using UE4
+* **Bilel Ali** - Algorithm and problem solving
 * **Kevin Jessy** - Algorithm and problem solving
 * **Patrick** - Algorithm and problem solving
 
